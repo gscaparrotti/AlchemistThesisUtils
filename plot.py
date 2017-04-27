@@ -26,12 +26,20 @@ amount = args.amount
 rawData = np.genfromtxt(args.fileName, delimiter=' ', names=args.fields)
 rawData.sort(order=x)
 iterations = int(len(rawData) / amount)
+fields_amount = len(rawData[0])
 data = np.zeros_like(rawData[:iterations])
 for r in range(0, len(rawData), amount):
     sum = 0.0
     for e in range(r, r+amount, 1):
-        sum += rawData[e][0]
-    data[int(r / amount)] = (sum / amount, rawData[r][1], rawData[r][2], rawData[r][3])
+        sum += rawData[e][y]
+    temp = np.zeros(fields_amount)
+    yindex = rawData[0].dtype.names.index(y)
+    for q in range(0, fields_amount, 1):
+        if q == yindex:
+            temp[q] = sum / amount
+        else:
+            temp[q] = rawData[r][q]
+    data[int(r / amount)] = temp
 data.sort(order=x)
 fig, ax1 = plt.subplots()
 plt.xlabel(args.xlabel)
