@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-f', '--file', action="store", dest="fileName", help="The CSV file containing the data you want to plot", required=True)
+parser.add_argument('-f', '--file', action="append", dest="fileName", help="The CSV file containing the data you want to plot", required=True)
 parser.add_argument('-a', '--amount', action="store", dest="amount", help="The amount of measurements for each iteration", type=int, required=True)
-parser.add_argument('--fields', action="store", dest="fields", help="defines the names of the columns. Must be the same size of the columns number", default="x,y,z,t")
+parser.add_argument('--fields', action="store", dest="fields", help="defines the amount and the names of the columns. Must be the same size of the columns number", default="x,y,z,t")
 parser.add_argument('--ycolumn', action="store", dest="y", help="The CSV file column you want to plot on the Y axis", default="x")
 parser.add_argument('--xcolumn', action="store", dest="x", help="The CSV file column you want to plot on the X axis", default="y")
 parser.add_argument('--xlabel', action="store", dest="xlabel", help="The label for the X axis", default='')
@@ -23,24 +23,6 @@ args = parser.parse_args()
 x = args.x
 y = args.y
 amount = args.amount
-rawData = np.genfromtxt(args.fileName, delimiter=' ', names=args.fields)
-rawData.sort(order=x)
-iterations = int(len(rawData) / amount)
-fields_amount = len(rawData[0])
-data = np.zeros_like(rawData[:iterations])
-for r in range(0, len(rawData), amount):
-    sum = 0.0
-    for e in range(r, r+amount, 1):
-        sum += rawData[e][y]
-    temp = np.zeros(fields_amount)
-    yindex = rawData[0].dtype.names.index(y)
-    for q in range(0, fields_amount, 1):
-        if q == yindex:
-            temp[q] = sum / amount
-        else:
-            temp[q] = rawData[r][q]
-    data[int(r / amount)] = temp
-data.sort(order=x)
 fig, ax1 = plt.subplots()
 plt.xlabel(args.xlabel)
 plt.ylabel(args.ylabel)
@@ -48,12 +30,35 @@ plt.ylabel(args.ylabel)
 if (args.log):
     ax1.set_yscale('log')
     ax1.set_xscale('log')
-plt.yticks(data[y])
-plt.xticks(data[x], rotation=45)
+yt = np.empty(0)
+xt = np.empty(0)
 ax1.grid(which = 'both')
 ax1.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
 ax1.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
-ax1.plot(data[x], data[y], 'o-', label='the data')
+for file in args.fileName:
+    rawData = np.genfromtxt(file, delimiter=' ', names=args.fields)
+    rawData.sort(order=x)
+    iterations = int(len(rawData) / amount)
+    fields_amount = len(rawData[0])
+    data = np.zeros_like(rawData[:iterations])
+    for r in range(0, len(rawData), amount):
+        sum = 0.0
+        for e in range(r, r+amount, 1):
+            sum += rawData[e][y]
+        temp = np.zeros(fields_amount)
+        yindex = rawData[0].dtype.names.index(y)
+        for q in range(0, fields_amount, 1):
+            if q == yindex:
+                temp[q] = sum / amount
+            else:
+                temp[q] = rawData[r][q]
+        data[int(r / amount)] = temp
+    data.sort(order=x)
+    yt = np.append(yt, data[y])
+    xt = np.append(xt, data[x])
+    ax1.plot(data[x], data[y], 'o-', label='the data')
+plt.yticks(np.unique(yt))
+plt.xticks(np.unique(xt), rotation=45)
 plt.show()
 if (args.save):
     fig.savefig(args.fileName + '-plot.pdf')
