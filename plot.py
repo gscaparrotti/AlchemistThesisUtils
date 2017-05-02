@@ -41,8 +41,10 @@ for file in args.fileName:
     iterations = int(len(rawData) / amount)
     fields_amount = len(rawData[0])
     data = np.zeros_like(rawData[:iterations])
+    ystddev = np.zeros(iterations)
     for r in range(0, len(rawData), amount):
         sum = 0.0
+        ystddev[int(r / amount)] = np.std(rawData[r:r + amount][y])
         for e in range(r, r+amount, 1):
             sum += rawData[e][y]
         temp = np.zeros(fields_amount)
@@ -56,7 +58,7 @@ for file in args.fileName:
     data.sort(order=x)
     yt = np.append(yt, data[y])
     xt = np.append(xt, data[x])
-    ax1.plot(data[x], data[y], 'o-', label='the data')
+    ax1.errorbar(data[x], data[y], yerr=ystddev, fmt='o-', capsize=2, label='the data')
 plt.yticks(np.unique(yt))
 plt.xticks(np.unique(xt), rotation=45)
 plt.show()
