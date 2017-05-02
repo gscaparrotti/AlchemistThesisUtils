@@ -25,7 +25,6 @@ for s in os.listdir():
             endLine = file_len(s) - 4
             variableList = lines[endLine].split()
             if (i == -1):
-                firstRun = False
                 i = len(variableList) - 1
             elif (i < 0 or i > len(variableList)):
                 sys.exit("The index must be a value between 0 and " + str(len(variableList) - 1) + " (it was " + str(i) + ")");
