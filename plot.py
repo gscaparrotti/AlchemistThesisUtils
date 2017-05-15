@@ -1,13 +1,12 @@
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 #==============================================================================
-# import matplotlib.ticker as ticker
 # import matplotlib.cm as cmx
 # import matplotlib.lines as mlines
 # from scipy import interpolate
 #==============================================================================
-from matplotlib.ticker import FormatStrFormatter
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', '--file', action="append", dest="fileName", help="The CSV file containing the data you want to plot", required=True)
@@ -34,8 +33,8 @@ if (args.log):
 yt = np.empty(0)
 xt = np.empty(0)
 ax1.grid(which = 'both')
-ax1.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
-ax1.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+ax1.xaxis.set_major_formatter(ticker.FormatStrFormatter('%.3f'))
+ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.0f'))
 for f in range(0, len(args.fileName)):
     rawData = np.genfromtxt(args.fileName[f], delimiter=' ', names=args.fields)
     rawData.sort(order=x)
@@ -61,7 +60,9 @@ for f in range(0, len(args.fileName)):
     xt = np.append(xt, data[x])
     ax1.errorbar(data[x], data[y], yerr=ystddev, fmt='o-', capsize=2, label = args.legend[f] if (args.legend != None and len(args.legend) >= f) else "Plot n. " + str(f + 1))
     ax1.legend(loc='lower right')
-plt.yticks(np.unique(yt))
+yticks = np.unique(yt)
+ciphers = -(len(str(int(np.nanmin(yticks)))) - 1)
+plt.yticks(np.around(np.take(yticks, range(0, len(yticks) + 1, len(args.fileName)), mode = 'clip'), decimals = min([ciphers, 0])))
 plt.xticks(np.unique(xt), rotation=45)
 plt.show()
 if (args.save):
