@@ -61,8 +61,8 @@ for f in range(0, len(args.fileName)):
     ax1.errorbar(data[x], data[y], yerr=ystddev, fmt='o-', capsize=2, label = args.legend[f] if (args.legend != None and len(args.legend) >= f) else "Plot n. " + str(f + 1))
     ax1.legend(loc='lower right')
 yticks = np.unique(yt)
-ciphers = -(len(str(int(np.nanmin(yticks)))) - 1)
-plt.yticks(np.around(np.take(yticks, range(0, len(yticks) + 1, len(args.fileName)), mode = 'clip'), decimals = min([ciphers, 0])))
+ciphers = min([-(len(str(int(np.nanmin(yticks)))) - 1), 0]) if int(np.nanmin(yticks)) > 0 else len(str(np.nanmin(yticks)))
+plt.yticks(np.around(np.take(yticks, range(0, len(yticks) + 1, len(args.fileName)), mode = 'clip'), decimals = ciphers))
 plt.xticks(np.unique(xt), rotation=45)
 plt.show()
 if (args.save):
