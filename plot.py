@@ -16,6 +16,7 @@ parser.add_argument('--fields', action="store", dest="fields", help="defines the
 parser.add_argument('--ycolumn', action="store", dest="y", help="The CSV file column you want to plot on the Y axis (must be a field you specified with the --field option)", default="x")
 parser.add_argument('--xcolumn', action="store", dest="x", help="The CSV file column you want to plot on the X axis (must be a field you specified with the --field option)", default="y")
 parser.add_argument('--ycyphers', action="store", dest="yc", help="The amount of cypher to report on the Y axis.", default="0")
+parser.add_argument('--ymax', action="store", dest="ymax", help="The max value for the Y axis", default='-1')
 parser.add_argument('--xlabel', action="store", dest="xlabel", help="The label for the X axis", default='')
 parser.add_argument('--ylabel', action="store", dest="ylabel", help="The label for the Y axis", default='')
 parser.add_argument('--log', action='store_true', help='Specifies if the axises should use a logarithmic scale')
@@ -34,6 +35,8 @@ if (args.log):
 yt = np.empty(0)
 xt = np.empty(0)
 ax1.grid(which = 'both')
+if (args.ymax != -1):
+    plt.ylim((0,int(args.ymax)))
 ax1.xaxis.set_major_formatter(ticker.FormatStrFormatter('%.3f'))
 ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.' + args.yc + 'f'))
 for f in range(0, len(args.fileName)):
