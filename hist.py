@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
@@ -13,6 +14,9 @@ parser.add_argument('--xlabel', action="store", dest="xlabel", help="The label f
 parser.add_argument('--ylabel', action="store", dest="ylabel", help="The label for the Y axis", default='')
 parser.add_argument('-s', '--save', action='store_true', help='Specifies if the produced plot should be saved to file')
 args = parser.parse_args()
+font = {'weight' : 'normal',
+        'size'   : 22}
+matplotlib.rc('font', **font)
 y = args.y
 x = args.x
 amount = args.amount

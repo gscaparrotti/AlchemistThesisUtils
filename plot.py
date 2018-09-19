@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 #==============================================================================
@@ -25,6 +26,9 @@ args = parser.parse_args()
 x = args.x
 y = args.y
 amount = args.amount
+font = {'weight' : 'normal',
+        'size'   : 22}
+matplotlib.rc('font', **font)
 fig, ax1 = plt.subplots()
 plt.xlabel(args.xlabel)
 plt.ylabel(args.ylabel)
@@ -35,7 +39,7 @@ if (args.log):
 yt = np.empty(0)
 xt = np.empty(0)
 ax1.grid(which = 'both')
-if (args.ymax != -1):
+if (int(args.ymax) != -1):
     plt.ylim((0,int(args.ymax)))
 ax1.xaxis.set_major_formatter(ticker.FormatStrFormatter('%.3f'))
 ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.' + args.yc + 'f'))
@@ -62,12 +66,12 @@ for f in range(0, len(args.fileName)):
     data.sort(order=x)
     yt = np.append(yt, data[y])
     xt = np.append(xt, data[x])
-    ax1.errorbar(data[x], data[y], yerr=ystddev, fmt='o-', capsize=2, label = args.legend[f] if (args.legend != None and len(args.legend) >= f) else "Plot n. " + str(f + 1))
-    ax1.legend(loc='lower right')
+    ax1.errorbar(data[x], data[y], yerr=ystddev, fmt='-', capsize=2, label = args.legend[f] if (args.legend != None and len(args.legend) >= f) else None)
+    ax1.legend(loc='lower right', ncol=2)
 yticks = np.unique(yt)
 ciphers = min([-(len(str(int(np.nanmin(yticks)))) - 1), 0]) if int(np.nanmin(yticks)) > 0 else len(str(np.nanmin(yticks)))
 plt.yticks(np.around(np.take(yticks, range(0, len(yticks) + 1, len(args.fileName)), mode = 'clip'), decimals = ciphers))
-plt.xticks(np.unique(xt), rotation=45)
+plt.xticks(np.unique(xt), rotation=0)
 plt.show()
 if (args.save):
     fig.savefig(args.fileName + '-plot.pdf')
