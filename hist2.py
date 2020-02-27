@@ -19,8 +19,8 @@ y = args.y
 x = args.x
 ys = []
 tags = []
-rawData = np.genfromtxt(args.fileName, delimiter=' ', names=args.fields)
-rawData.sort(order=x)
+rawData = np.genfromtxt(args.fileName, delimiter='|', names=args.fields, dtype=[('f0', '<U20'), ('f1', '<f8')])
+rawData.sort(order=y)
 for k in range (0, len(rawData)):
     ys.append(rawData[k][y])
     tags.append(rawData[k][x])
